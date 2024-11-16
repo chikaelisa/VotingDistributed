@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/VotingClient/VotingClient.iml" filepath="$PROJECT_DIR$/VotingClient/VotingClient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/VotingCommon/VotingCommon.iml" filepath="$PROJECT_DIR$/VotingCommon/VotingCommon.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/VotingDistributed.iml" filepath="$PROJECT_DIR$/.idea/VotingDistributed.iml" />
+      <module fileurl="file://$PROJECT_DIR$/VotingServer/VotingServer.iml" filepath="$PROJECT_DIR$/VotingServer/VotingServer.iml" />
+    </modules>
+  </component>
+</project>
