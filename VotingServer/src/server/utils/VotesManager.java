@@ -18,6 +18,10 @@ public class VotesManager {
         votes.put(candidate, votes.getOrDefault(candidate, 0) + 1);
     }
 
+    public void clearVotes() {
+        votes.clear();
+    }
+
     public void saveFinalResults(ElectionData electionData) throws IOException {
         for (String candidate : electionData.getCandidates()) {
             if (!votes.containsKey(candidate)) {

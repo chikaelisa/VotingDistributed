@@ -6,6 +6,7 @@ import common.utils.ElectionData;
 import common.utils.ServerSocketUtils;
 import server.components.menu.EndVotingMenuItem;
 import server.components.menu.HelpServerMenuItem;
+import server.components.menu.StartVotingMenuItem;
 import server.components.panel.ResultPanel;
 import server.utils.CPFManager;
 import server.utils.ClientHandler;
@@ -25,16 +26,19 @@ public class VotingServer extends JFrame {
     private ServerSocket serverSocket;
     private Thread connectionThread;
 
-    public final CPFManager cpfManager = new CPFManager();
-    public final VotesManager votesManager = new VotesManager();
-
     public final ElectionData electionData = new ElectionData(
             "Quem deve ser o próximo presidente?",
             new String[]{"Candidato A", "Candidato B", "Candidato C", "Candidato D", "Candidato E"}
     );
 
+    public final CPFManager cpfManager = new CPFManager();
+    public final VotesManager votesManager = new VotesManager();
+
     private final ResultPanel resultPanel;
     private final StatusPanel statusPanel;
+    private final JMenu serverMenu;
+    private final JMenuItem startServerMenuItem = new StartVotingMenuItem(this);
+    private final JMenuItem endServerMenuItem = new EndVotingMenuItem(this);
 
     public VotingServer() {
         setTitle("Servidor de votação");
@@ -46,14 +50,13 @@ public class VotingServer extends JFrame {
         resultPanel = new ResultPanel();
         statusPanel = new StatusPanel();
 
-        JMenu menu = new JMenu("Menu");
-        menu.add(new HelpServerMenuItem());
-        menu.add(new AboutMenuItem());
-        menu.addSeparator();
-        menu.add(new EndVotingMenuItem(this));
+        serverMenu = new JMenu("Menu");
+        serverMenu.add(new HelpServerMenuItem());
+        serverMenu.add(new AboutMenuItem());
+        serverMenu.addSeparator();
 
         JMenuBar menuBar = new JMenuBar();
-        menuBar.add(menu);
+        menuBar.add(serverMenu);
 
         setJMenuBar(menuBar);
         add(resultPanel, BorderLayout.CENTER);
@@ -115,12 +118,30 @@ public class VotingServer extends JFrame {
         }
     }
 
+    public void startVoting() {
+        cpfManager.clearCPFs();
+        votesManager.clearVotes();
+        resultPanel.startElection();
+
+        serverMenu.remove(startServerMenuItem);
+        serverMenu.add(endServerMenuItem);
+        serverMenu.revalidate();
+        serverMenu.repaint();
+
+        startServer();
+    }
+
     public void endVoting() {
         try {
             stopServer();
             votesManager.saveFinalResults(electionData);
             cpfManager.saveFinalResults(electionData);
-            resultPanel.setFinalResult();
+            resultPanel.endElection();
+
+            serverMenu.remove(endServerMenuItem);
+            serverMenu.add(startServerMenuItem);
+            serverMenu.revalidate();
+            serverMenu.repaint();
         } catch (IOException e) {
             statusPanel.setStatusLabel("Erro ao encerrar votação: " + e.getMessage() + "!");
         }
@@ -131,7 +152,7 @@ public class VotingServer extends JFrame {
             @Override
             public void windowOpened(WindowEvent e) {
                 super.windowOpened(e);
-                startServer();
+                startVoting();
             }
 
             @Override

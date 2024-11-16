@@ -25,7 +25,12 @@ public class ResultPanel extends JPanel {
         pieChartPanel.updateResults(votes);
     }
 
-    public void setFinalResult() {
+    public void startElection() {
+        updateResults(null);
+        titleLabel.setText("Resultados parciais da votação");
+    }
+
+    public void endElection() {
         titleLabel.setText("Resultados finais da votação");
     }
 }

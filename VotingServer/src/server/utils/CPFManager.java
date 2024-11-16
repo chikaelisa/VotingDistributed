@@ -18,6 +18,10 @@ public class CPFManager {
         cpfVoted.add(cpf);
     }
 
+    public void clearCPFs() {
+        cpfVoted.clear();
+    }
+
     public void saveFinalResults(ElectionData electionData) throws IOException {
         try (FileWriter writer = new FileWriter("cpfs_votados.txt")) {
             writer.write("Questão da eleição: " + electionData.getQuestion() + "\n");
