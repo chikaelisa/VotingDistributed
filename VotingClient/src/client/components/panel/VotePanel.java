@@ -16,7 +16,7 @@ public class VotePanel extends JPanel {
 
     private final JLabel titleLabel;
     private final JTextField cpfField;
-    private final JTextField candidateField;
+    private final JComboBox<String> candidateComboBox;
     private final JButton voteButton;
     private final JPanel formPanel;
 
@@ -24,22 +24,24 @@ public class VotePanel extends JPanel {
     private ObjectInputStream input;
     private ObjectOutputStream output;
 
-    // TODO: Melhorar disposição dos componentes
     public VotePanel(VotingClientFrame clientFrame) {
         super(new GridLayout(3, 1));
 
         titleLabel = new JLabel("Conectando ao servidor...");
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+
         cpfField = new JTextField();
-        candidateField = new JTextField();
+        candidateComboBox = new JComboBox<>();
 
         voteButton = new JButton("Votar");
-        voteButton.addActionListener(e -> onVoteButtonClicked(clientFrame));
+        voteButton.addActionListener(_ -> onVoteButtonClicked(clientFrame));
 
         formPanel = new JPanel(new GridLayout(2, 2));
         formPanel.add(new JLabel("CPF:"));
         formPanel.add(cpfField);
-        formPanel.add(new JLabel("Nº candidato:"));
-        formPanel.add(candidateField);
+        formPanel.add(new JLabel("Candidato:"));
+        formPanel.add(candidateComboBox);
 
         add(titleLabel);
     }
@@ -55,6 +57,13 @@ public class VotePanel extends JPanel {
             ElectionData electionData = (ElectionData) input.readObject();
             titleLabel.setText(electionData.getQuestion());
 
+            DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+            model.addElement("Selecione um candidato...");
+            for (String candidate : electionData.getCandidates()) {
+                model.addElement(candidate);
+            }
+            candidateComboBox.setModel(model);
+
             this.add(formPanel);
             this.add(voteButton);
 
@@ -67,7 +76,7 @@ public class VotePanel extends JPanel {
 
     private void onVoteButtonClicked(VotingClientFrame clientFrame) {
         String cpf = cpfField.getText();
-        String candidateId = candidateField.getText();
+        String candidateId = Integer.toString(candidateComboBox.getSelectedIndex() - 1);
 
         try {
             output.writeObject(cpf);
@@ -81,7 +90,7 @@ public class VotePanel extends JPanel {
                     socket.close();
 
                     cpfField.setText("");
-                    candidateField.setText("");
+                    candidateComboBox.setSelectedIndex(0);
 
                     clientFrame.getStatusPanel().setStatusLabel("Voto enviado com sucesso!");
                     clientFrame.switchToStartVotePanel();
