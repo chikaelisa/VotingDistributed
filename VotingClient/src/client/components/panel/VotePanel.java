@@ -17,7 +17,9 @@ public class VotePanel extends JPanel {
     private final JLabel titleLabel;
     private final JTextField cpfField;
     private final JComboBox<String> candidateComboBox;
+    private final JButton cancelButton;
     private final JButton voteButton;
+    private final JPanel buttonsPanel;
     private final JPanel formPanel;
 
     private Socket socket;
@@ -34,8 +36,15 @@ public class VotePanel extends JPanel {
         cpfField = new JTextField();
         candidateComboBox = new JComboBox<>();
 
+        cancelButton = new JButton("Cancelar");
+        cancelButton.addActionListener(_ -> onCancelButtonClicked(clientFrame));
+
         voteButton = new JButton("Votar");
         voteButton.addActionListener(_ -> onVoteButtonClicked(clientFrame));
+
+        buttonsPanel = new JPanel(new GridLayout(1, 2));
+        buttonsPanel.add(cancelButton);
+        buttonsPanel.add(voteButton);
 
         formPanel = new JPanel(new GridLayout(2, 2));
         formPanel.add(new JLabel("CPF:"));
@@ -65,7 +74,7 @@ public class VotePanel extends JPanel {
             candidateComboBox.setModel(model);
 
             this.add(formPanel);
-            this.add(voteButton);
+            this.add(buttonsPanel);
 
             clientFrame.getStatusPanel().setStatusLabel("Conexão estabelecida com o servidor!");
         } catch (IOException | ClassNotFoundException e) {
@@ -114,5 +123,22 @@ public class VotePanel extends JPanel {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void onCancelButtonClicked(VotingClientFrame clientFrame) {
+        try {
+            if (socket != null && !socket.isClosed()) {
+                output.flush();
+                output.close();
+                input.close();
+                socket.close();
+            }
+        } catch (IOException e) {
+            clientFrame.getStatusPanel().setStatusLabel("Erro ao encerrar conexão: " + e.getMessage());
+        }
+
+        cpfField.setText("");
+        candidateComboBox.setSelectedIndex(0);
+        clientFrame.switchToStartVotePanel();
     }
 }
