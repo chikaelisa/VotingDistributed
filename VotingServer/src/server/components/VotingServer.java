@@ -28,10 +28,9 @@ public class VotingServer extends JFrame {
     public final CPFManager cpfManager = new CPFManager();
     public final VotesManager votesManager = new VotesManager();
 
-    // TODO: Verificar se essa é a melhor forma de armazenar as informações da eleição e atualizar!
     public final ElectionData electionData = new ElectionData(
             "Quem deve ser o próximo presidente?",
-            new String[]{"Candidato A", "Candidato B", "Candidato C"}
+            new String[]{"Candidato A", "Candidato B", "Candidato C", "Candidato D", "Candidato E"}
     );
 
     private final ResultPanel resultPanel;
@@ -44,7 +43,7 @@ public class VotingServer extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        resultPanel = new ResultPanel(electionData.getCandidates());
+        resultPanel = new ResultPanel();
         statusPanel = new StatusPanel();
 
         JMenu menu = new JMenu("Menu");
