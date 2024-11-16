@@ -1,5 +1,7 @@
 package server.utils;
 
+import common.utils.ElectionData;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
@@ -16,9 +18,9 @@ public class CPFManager {
         cpfVoted.add(cpf);
     }
 
-    // TODO: Mudar para usar a classe FileUtils
-    public void saveFinalResults() throws IOException {
+    public void saveFinalResults(ElectionData electionData) throws IOException {
         try (FileWriter writer = new FileWriter("cpfs_votados.txt")) {
+            writer.write("Questão da eleição: " + electionData.getQuestion() + "\n");
             writer.write("Resultado final dos CPFs votados:\n");
             for (String cpf : cpfVoted.stream().toList()) {
                 writer.write("CPF: " + cpf + "\n");

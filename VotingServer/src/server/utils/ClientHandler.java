@@ -31,14 +31,14 @@ public class ClientHandler extends Thread {
                 int candidateId = Integer.parseInt((String) input.readObject());
 
                 if (server.cpfManager.isCPFVoted(cpf)) {
-                    output.writeObject(1); // Erro: Este CPF já votou.
+                    output.writeObject(1); // Error: CPF already voted.
                 } else if (!CPFValidator.isValidCPF(cpf)) {
-                    output.writeObject(2); // Erro: CPF inválido.
+                    output.writeObject(2); // Error: Invalid CPF.
                 } else if (candidateId < 0 || candidateId >= server.electionData.getCandidates().length) {
-                    output.writeObject(3); // Erro: Voto inválido.
+                    output.writeObject(3); // Error: Invalid vote.
                 } else {
                     server.submitVote(cpf, candidateId);
-                    output.writeObject(0); // Voto registrado com sucesso.
+                    output.writeObject(0); // Vote registered with success!
                     break;
                 }
             }

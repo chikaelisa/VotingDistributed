@@ -114,8 +114,8 @@ public class VotingServer extends JFrame {
     public void endVoting() {
         try {
             stopServer();
-            votesManager.saveFinalResults();
-            cpfManager.saveFinalResults();
+            votesManager.saveFinalResults(electionData);
+            cpfManager.saveFinalResults(electionData);
             resultPanel.setFinalResult();
         } catch (IOException e) {
             statusPanel.setStatusLabel("Erro ao encerrar votação: " + e.getMessage() + "!");

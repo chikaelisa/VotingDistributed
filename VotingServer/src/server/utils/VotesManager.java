@@ -1,5 +1,7 @@
 package server.utils;
 
+import common.utils.ElectionData;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,11 +18,16 @@ public class VotesManager {
         votes.put(candidate, votes.getOrDefault(candidate, 0) + 1);
     }
 
-    // TODO: Mudar para usar a classe FileUtils
-    // TODO: Colocar candidatos sem votos também
-    public void saveFinalResults() throws IOException {
+    public void saveFinalResults(ElectionData electionData) throws IOException {
+        for (String candidate : electionData.getCandidates()) {
+            if (!votes.containsKey(candidate)) {
+                votes.put(candidate, 0);
+            }
+        }
+
         try (FileWriter writer = new FileWriter("resultado_votos.txt")) {
-            writer.write("Resultado final dos votos:\n");
+            writer.write("Questão da eleição: " + electionData.getQuestion() + "\n");
+            writer.write("Resultado final da votação:\n");
             for (Map.Entry<String, Integer> entry : votes.entrySet()) {
                 writer.write(entry.getKey() + ": " + entry.getValue() + " votos\n");
             }

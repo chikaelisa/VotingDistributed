@@ -17,8 +17,6 @@ public class VotePanel extends JPanel {
     private final JLabel titleLabel;
     private final JTextField cpfField;
     private final JComboBox<String> candidateComboBox;
-    private final JButton cancelButton;
-    private final JButton voteButton;
     private final JPanel buttonsPanel;
     private final JPanel formPanel;
 
@@ -36,10 +34,10 @@ public class VotePanel extends JPanel {
         cpfField = new JTextField();
         candidateComboBox = new JComboBox<>();
 
-        cancelButton = new JButton("Cancelar");
+        JButton cancelButton = new JButton("Cancelar");
         cancelButton.addActionListener(_ -> onCancelButtonClicked(clientFrame));
 
-        voteButton = new JButton("Votar");
+        JButton voteButton = new JButton("Votar");
         voteButton.addActionListener(_ -> onVoteButtonClicked(clientFrame));
 
         buttonsPanel = new JPanel(new GridLayout(1, 2));
