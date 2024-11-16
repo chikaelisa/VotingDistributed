@@ -36,6 +36,8 @@ public class ClientHandler extends Thread {
                     output.writeObject(2); // Error: Invalid CPF.
                 } else if (candidateId < 0 || candidateId >= server.electionData.getCandidates().length) {
                     output.writeObject(3); // Error: Invalid vote.
+                } else if (!server.isServerRunning()) {
+                    output.writeObject(4); // Error: Election is over.
                 } else {
                     server.submitVote(cpf, candidateId);
                     output.writeObject(0); // Vote registered with success!

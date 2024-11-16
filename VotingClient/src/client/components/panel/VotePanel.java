@@ -53,10 +53,20 @@ public class VotePanel extends JPanel {
         add(titleLabel);
     }
 
-    // TODO: Melhorar fluxo caso não consiga se conectar ao servidor
-    // TODO: Verificar problema de abrir a tela de votação depois de votar, fechar o servidor e iniciar votação de novo
-    public void startServerConnection(VotingClientFrame clientFrame) {
+    private void resetVotePanel() {
+        titleLabel.setText("Conectando ao servidor...");
+        cpfField.setText("");
+        candidateComboBox.setModel(new DefaultComboBoxModel<>());
+        remove(formPanel);
+        remove(buttonsPanel);
+    }
+
+   public void startServerConnection(VotingClientFrame clientFrame) {
+        resetVotePanel();
+
         try {
+            if (socket != null && !socket.isClosed()) socket.close();
+
             socket = new Socket(ServerSocketUtils.SERVER_HOST, ServerSocketUtils.SERVER_PORT);
             input = new ObjectInputStream(socket.getInputStream());
             output = new ObjectOutputStream(socket.getOutputStream());
@@ -76,8 +86,20 @@ public class VotePanel extends JPanel {
 
             clientFrame.getStatusPanel().setStatusLabel("Conexão estabelecida com o servidor!");
         } catch (IOException | ClassNotFoundException e) {
-            clientFrame.switchToStartVotePanel();
-            clientFrame.getStatusPanel().setStatusLabel("Erro ao estabelecer conexão com o servidor.");
+            int retryOption = JOptionPane.showConfirmDialog(
+                    this,
+                    "Não foi possível conectar ao servidor.\nDeseja tentar novamente?",
+                    "Erro de Conexão",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            if (retryOption == JOptionPane.YES_OPTION) {
+                startServerConnection(clientFrame);
+            } else {
+                clientFrame.switchToStartVotePanel();
+                clientFrame.getStatusPanel().setStatusLabel("Erro ao tentar estabelecer conexão com o servidor.");
+            }
         }
     }
 
@@ -110,6 +132,10 @@ public class VotePanel extends JPanel {
                     break;
                 case 3:
                     clientFrame.getStatusPanel().setStatusLabel("Erro: Candidato inexistente.");
+                    break;
+                case 4:
+                    clientFrame.getStatusPanel().setStatusLabel("Erro: Eleição encerrada.");
+                    clientFrame.switchToStartVotePanel();
                     break;
                 default:
                     clientFrame.getStatusPanel().setStatusLabel("Erro inesperado!");

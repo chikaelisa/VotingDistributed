@@ -34,7 +34,7 @@ public class StartVotePanel extends JPanel {
     }
 
     private void onStartButtonClicked(VotingClientFrame clientFrame) {
-        clientFrame.getVotePanel().startServerConnection(clientFrame);
         clientFrame.switchToVotePanel();
+        clientFrame.getVotePanel().startServerConnection(clientFrame);
     }
 }

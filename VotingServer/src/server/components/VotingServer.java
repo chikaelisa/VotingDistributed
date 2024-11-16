@@ -63,6 +63,10 @@ public class VotingServer extends JFrame {
         setupWindowsListener();
     }
 
+    public boolean isServerRunning() {
+        return running;
+    }
+
     public synchronized void submitVote(String cpf, int voteIndex) {
         cpfManager.addCPF(cpf);
 
