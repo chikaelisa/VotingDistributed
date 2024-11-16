@@ -3,6 +3,7 @@ package server.utils;
 import common.utils.CPFValidator;
 import server.components.VotingServer;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -27,25 +28,37 @@ public class ClientHandler extends Thread {
             output.flush();
 
             while (true) {
-                String cpf = (String) input.readObject();
-                int candidateId = Integer.parseInt((String) input.readObject());
+                try {
+                    String cpf = (String) input.readObject();
+                    int candidateId = Integer.parseInt((String) input.readObject());
 
-                if (server.cpfManager.isCPFVoted(cpf)) {
-                    output.writeObject(1); // Error: CPF already voted.
-                } else if (!CPFValidator.isValidCPF(cpf)) {
-                    output.writeObject(2); // Error: Invalid CPF.
-                } else if (candidateId < 0 || candidateId >= server.electionData.getCandidates().length) {
-                    output.writeObject(3); // Error: Invalid vote.
-                } else if (!server.isServerRunning()) {
-                    output.writeObject(4); // Error: Election is over.
-                } else {
-                    server.submitVote(cpf, candidateId);
-                    output.writeObject(0); // Vote registered with success!
+                    if (server.cpfManager.isCPFVoted(cpf)) {
+                        output.writeObject(1); // Error: CPF already voted.
+                    } else if (!CPFValidator.isValidCPF(cpf)) {
+                        output.writeObject(2); // Error: Invalid CPF.
+                    } else if (candidateId < 0 || candidateId >= server.electionData.getCandidates().length) {
+                        output.writeObject(3); // Error: Invalid vote.
+                    } else if (!server.isServerRunning()) {
+                        output.writeObject(4); // Error: Election ended.
+                        break;
+                    } else {
+                        server.submitVote(cpf, candidateId);
+                        output.writeObject(0); // Success: Vote registered.
+                        break;
+                    }
+                } catch (EOFException eof) {
+                    System.out.println("Conexão encerrada pelo cliente.");
                     break;
                 }
             }
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Erro inesperado: " + e.getMessage());
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                System.out.println("Erro inesperado: " + e.getMessage());
+            }
         }
     }
 }
