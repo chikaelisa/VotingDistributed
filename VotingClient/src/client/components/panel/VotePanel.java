@@ -121,23 +121,29 @@ public class VotePanel extends JPanel {
                     cpfField.setText("");
                     candidateComboBox.setSelectedIndex(0);
 
+                    JOptionPane.showMessageDialog(null, "Voto enviado com sucesso!");
                     clientFrame.getStatusPanel().setStatusLabel("Voto enviado com sucesso!");
                     clientFrame.switchToStartVotePanel();
                     break;
                 case 1:
+                    JOptionPane.showMessageDialog(null, "Erro: Este CPF já votou.");
                     clientFrame.getStatusPanel().setStatusLabel("Erro: Este CPF já votou.");
                     break;
                 case 2:
+                    JOptionPane.showMessageDialog(null, "Erro: CPF inválido.");
                     clientFrame.getStatusPanel().setStatusLabel("Erro: CPF inválido.");
                     break;
                 case 3:
+                    JOptionPane.showMessageDialog(null, "Erro: Candidato inexistente.");
                     clientFrame.getStatusPanel().setStatusLabel("Erro: Candidato inexistente.");
                     break;
                 case 4:
+                    JOptionPane.showMessageDialog(null, "Erro: Eleição encerrada.");
                     clientFrame.getStatusPanel().setStatusLabel("Erro: Eleição encerrada.");
                     clientFrame.switchToStartVotePanel();
                     break;
                 default:
+                    JOptionPane.showMessageDialog(null, "Erro inesperado!");
                     clientFrame.getStatusPanel().setStatusLabel("Erro inesperado!");
                     break;
             }
